@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.direct.dao.DirectCarMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.direct.entity.DirectCar">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="urla" jdbcType="VARCHAR" property="urla" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="urlb" jdbcType="VARCHAR" property="urlb" />
+  </resultMap>
+  <insert id="insert" parameterType="com.skycat.direct.entity.DirectCar">
+    insert into direct_car (id, img1, urla, 
+      img2, urlb)
+    values (#{id,jdbcType=INTEGER}, #{img1,jdbcType=VARCHAR}, #{urla,jdbcType=VARCHAR}, 
+      #{img2,jdbcType=VARCHAR}, #{urlb,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.direct.entity.DirectCar">
+    insert into direct_car
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="img1 != null">
+        img1,
+      </if>
+      <if test="urla != null">
+        urla,
+      </if>
+      <if test="img2 != null">
+        img2,
+      </if>
+      <if test="urlb != null">
+        urlb,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="img1 != null">
+        #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="urla != null">
+        #{urla,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="urlb != null">
+        #{urlb,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

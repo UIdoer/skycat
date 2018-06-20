@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.admin.dao.AdminMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.admin.entity.Admin">
+    <id column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="admin_code" jdbcType="VARCHAR" property="adminCode" />
+    <result column="admin_password" jdbcType="VARCHAR" property="adminPassword" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    admin_id, admin_code, admin_password
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from admin
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </select>
+ 
+  <!-- 查询所有管理员 -->
+  <select id="selectAll" resultMap="BaseResultMap">
+  	SELECT admin_id,admin_code
+	FROM admin 
+  </select>
+  
+  <!-- 查询当前可用的管理员 -->
+  <select id="selectValid" resultMap="BaseResultMap">
+  	select  a.admin_id, admin_code 
+  	from admin a,admin_role ar 
+  	WHERE a.`admin_id`=ar.`admin_id` 
+  	AND ar.`role_id`=1
+  	AND (SELECT COUNT(0) FROM store WHERE manager_id=a.`admin_id`)&lt;1
+  </select>
+  
+  <!-- 按照adminCode查询看是否已经存在 -->
+  <select id="selectByAdminCode" parameterType="string" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from admin where admin_code=#{code}
+  </select>
+  
+  <!-- 登录 -->
+  <select id="loginAdmin" parameterType="Admin" resultMap="BaseResultMap">
+  	select a.admin_id, admin_code
+  	from admin a
+  	where admin_code=#{adminCode}
+    and admin_password=#{adminPassword}
+  </select>
+  
+  <!-- 通过id查管理员管理的店铺 -->
+  <select id="selectStoreIdByAdminId" resultType="string" parameterType="int">
+  	select store_id from store where manager_id=#{id}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from admin
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.admin.entity.Admin">
+    insert into admin (admin_id, admin_code, admin_password
+      )
+    values (#{adminId,jdbcType=INTEGER}, #{adminCode,jdbcType=VARCHAR}, #{adminPassword,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <!-- 向admin-role关联表插入新管理员的身份数据 -->
+  <insert id="insertAdminRole" parameterType="map">
+  	insert into admin_role values(#{adminId},#{adminRole})
+  </insert>
+ 
+  
+  <insert id="insertSelective" parameterType="com.skycat.admin.entity.Admin" useGeneratedKeys="true" keyProperty="adminId">
+    insert into admin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="adminId != null">
+        admin_id,
+      </if>
+      <if test="adminCode != null">
+        admin_code,
+      </if>
+      <if test="adminPassword != null">
+        admin_password,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="adminId != null">
+        #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="adminCode != null">
+        #{adminCode,jdbcType=VARCHAR},
+      </if>
+      <if test="adminPassword != null">
+        #{adminPassword,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.admin.entity.Admin">
+    update admin
+    <set>
+      <if test="adminCode != null">
+        admin_code = #{adminCode,jdbcType=VARCHAR},
+      </if>
+      <if test="adminPassword != null">
+        admin_password = #{adminPassword,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.admin.entity.Admin">
+    update admin
+    set admin_code = #{adminCode,jdbcType=VARCHAR},
+      admin_password = #{adminPassword,jdbcType=VARCHAR}
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </update>
+</mapper>

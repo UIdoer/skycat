@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.user.address.dao.UserAddressMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.user.address.entity.UserAddress">
+    <id column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="is_default" jdbcType="VARCHAR" property="isDefault" />
+    <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
+    <result column="receive_phone" jdbcType="VARCHAR" property="receivePhone" />
+    <result column="receive_detail" jdbcType="VARCHAR" property="receiveDetail" />
+    <result column="specific_address" jdbcType="VARCHAR" property="specificAddress" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    address_id, user_id, receive_name, receive_phone, receive_detail,is_default,specific_address
+  </sql>
+  
+  <select id="selectAddressSelective" parameterType="com.skycat.user.address.entity.UserAddress" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_address
+     <trim prefix="where" prefixOverrides="and|or">
+      <if test="addressId != null">
+        and address_id = #{ addressId }
+      </if>
+      <if test="userId != null">
+        and user_id = #{ userId }
+      </if>
+      <if test="receiveName != null">
+        and receive_name = #{ receiveName }
+      </if>
+      <if test="receivePhone != null">
+        and receive_phone = #{ receivePhone }
+      </if>
+      <if test="receiveDetail != null">
+        and receive_detail = #{ receiveDetail }
+      </if>
+      <if test="isDefault != null">
+        and is_default = #{ isDefault }
+      </if>
+      <if test="specificAddress!=null">
+      	and specific_address = #{specificAddress}
+      </if>
+    </trim>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_address
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_address
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.user.address.entity.UserAddress">
+    insert into user_address (address_id, user_id, receive_name, 
+      receive_phone, receive_detail,is_default,specific_address)
+    values (#{addressId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{receiveName,jdbcType=VARCHAR}, 
+      #{receivePhone,jdbcType=VARCHAR}, #{receiveDetail,jdbcType=VARCHAR},#{isDefault,jdbcType=VARCHAR},
+      #{specificAddress,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.user.address.entity.UserAddress">
+    insert into user_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="addressId != null">
+        address_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="receiveName != null">
+        receive_name,
+      </if>
+      <if test="receivePhone != null">
+        receive_phone,
+      </if>
+      <if test="receiveDetail != null">
+        receive_detail,
+      </if>
+      <if test="isDefault != null">
+        is_default,
+      </if>
+      <if test="specific_address !=null">
+      	specific_address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="addressId != null">
+        #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveName != null">
+        #{receiveName,jdbcType=VARCHAR},
+      </if>
+      <if test="receivePhone != null">
+        #{receivePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveDetail != null">
+        #{receiveDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+        #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="specificAddress != null">
+        #{specificAddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+   <update id="updateAddresIsDefault" parameterType="com.skycat.user.address.entity.UserAddress">
+    update user_address
+    set 
+      is_default =  #{isDefault,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+    <if test="isDefault == 1">
+    	and address_id = #{addressId,jdbcType=INTEGER}
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.user.address.entity.UserAddress">
+    update user_address
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveName != null">
+        receive_name = #{receiveName,jdbcType=VARCHAR},
+      </if>
+      <if test="receivePhone != null">
+        receive_phone = #{receivePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveDetail != null">
+        receive_detail = #{receiveDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+       is_default =  #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="specificAddress !=null">
+       specific_address =  #{specificAddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.user.address.entity.UserAddress">
+    update user_address
+    set user_id = #{userId,jdbcType=INTEGER},
+      receive_name = #{receiveName,jdbcType=VARCHAR},
+      receive_phone = #{receivePhone,jdbcType=VARCHAR},
+      is_default =  #{isDefault,jdbcType=VARCHAR},
+      receive_detail = #{receiveDetail,jdbcType=VARCHAR},
+      specific_address = #{specificAddress,jdbcType=VARCHAR}
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </update>
+</mapper>

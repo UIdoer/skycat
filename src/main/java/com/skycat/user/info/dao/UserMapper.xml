@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.user.info.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.user.info.entity.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="question1" jdbcType="VARCHAR" property="question1" />
+    <result column="question2" jdbcType="VARCHAR" property="question2" />
+    <result column="question3" jdbcType="VARCHAR" property="question3" />
+    <result column="answer1" jdbcType="VARCHAR" property="answer1" />
+    <result column="answer2" jdbcType="VARCHAR" property="answer2" />
+    <result column="answer3" jdbcType="VARCHAR" property="answer3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    user_id, user_name, user_password, sex, picture, telephone, email, status, question1, 
+    question2, question3, answer1, answer2, answer3
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_info
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 实现selectAll -->
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" /> from user_info
+  </select>
+  
+  <!-- 实现通过条件查询user -->
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="UserPageCondition">
+  	select <include refid="Base_Column_List" /> from user_info
+  	<where>
+		<if test="status&gt;-1">
+			 status=#{status}
+		</if>
+		<if test="strCondition!=null and strCondition!=''">
+			and user_name like '%${strCondition}%'
+			or telephone like '%${strCondition}%'
+		</if>
+  	</where>
+  <where>
+  	
+  	</where>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user_info
+    where user_id = #{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.user.info.entity.User">
+    insert into user_info (user_id, user_name, user_password, 
+      sex, picture, telephone, 
+      email, status, question1, 
+      question2, question3, answer1, 
+      answer2, answer3)
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{userPassword,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=CHAR}, #{picture,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{question1,jdbcType=VARCHAR}, 
+      #{question2,jdbcType=VARCHAR}, #{question3,jdbcType=VARCHAR}, #{answer1,jdbcType=VARCHAR}, 
+      #{answer2,jdbcType=VARCHAR}, #{answer3,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.user.info.entity.User">
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="userPassword != null">
+        user_password,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="question1 != null">
+        question1,
+      </if>
+      <if test="question2 != null">
+        question2,
+      </if>
+      <if test="question3 != null">
+        question3,
+      </if>
+      <if test="answer1 != null">
+        answer1,
+      </if>
+      <if test="answer2 != null">
+        answer2,
+      </if>
+      <if test="answer3 != null">
+        answer3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPassword != null">
+        #{userPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="question1 != null">
+        #{question1,jdbcType=VARCHAR},
+      </if>
+      <if test="question2 != null">
+        #{question2,jdbcType=VARCHAR},
+      </if>
+      <if test="question3 != null">
+        #{question3,jdbcType=VARCHAR},
+      </if>
+      <if test="answer1 != null">
+        #{answer1,jdbcType=VARCHAR},
+      </if>
+      <if test="answer2 != null">
+        #{answer2,jdbcType=VARCHAR},
+      </if>
+      <if test="answer3 != null">
+        #{answer3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="User">
+    update user_info
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPassword != null">
+        user_password = #{userPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="question1 != null">
+        question1 = #{question1,jdbcType=VARCHAR},
+      </if>
+      <if test="question2 != null">
+        question2 = #{question2,jdbcType=VARCHAR},
+      </if>
+      <if test="question3 != null">
+        question3 = #{question3,jdbcType=VARCHAR},
+      </if>
+      <if test="answer1 != null">
+        answer1 = #{answer1,jdbcType=VARCHAR},
+      </if>
+      <if test="answer2 != null">
+        answer2 = #{answer2,jdbcType=VARCHAR},
+      </if>
+      <if test="answer3 != null">
+        answer3 = #{answer3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.user.info.entity.User">
+    update user_info
+    set user_name = #{userName,jdbcType=VARCHAR},
+      user_password = #{userPassword,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      question1 = #{question1,jdbcType=VARCHAR},
+      question2 = #{question2,jdbcType=VARCHAR},
+      question3 = #{question3,jdbcType=VARCHAR},
+      answer1 = #{answer1,jdbcType=VARCHAR},
+      answer2 = #{answer2,jdbcType=VARCHAR},
+      answer3 = #{answer3,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <!--登录通过用户名和密码查找用户  -->
+  <select id="selectUserByPwdName" parameterType="User" resultMap="BaseResultMap">
+     select 
+     <include refid="Base_Column_List"></include>
+     from user_info
+     where 
+     user_name=#{userName,jdbcType=VARCHAR}
+     and
+     user_password=#{userPassword}
+  </select> 
+  <!-- 修改密码判定用户名是否存在 -->
+  <select id="selectByUserName" parameterType="String" resultMap="BaseResultMap">
+     select 
+     <include refid="Base_Column_List"></include>
+     from user_info
+     where 
+     user_name=#{userName}
+  </select>
+  <!-- 找回密码判定邮箱是否存在 -->
+  <select id="selectUserByEmail" parameterType="String" resultMap="BaseResultMap">
+     select 
+     <include refid="Base_Column_List"></include>
+     from user_info
+     where 
+     email=#{email}
+  </select>
+  <update id="updatePwd" parameterType="User">
+     update user_info 
+     set user_password=#{userPassword}
+      where user_id=#{userId}
+  </update> 
+</mapper>

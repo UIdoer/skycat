@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.category.dao.CategoryMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.category.entity.Category">
+    <id column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="del" jdbcType="INTEGER" property="del" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    category_id, category_name, parent_id, del
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from category
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from category
+    where parent_id = #{parentId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByParentIdForSoncategory" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT c2.category_id,c2.category_name,c2.parent_id,c2.del
+	FROM category c1,category c2
+	WHERE c1.category_id=c2.parent_id AND c1.category_id =#{parentId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from category
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.category.entity.Category">
+    insert into category (category_id, category_name, parent_id, 
+      del)
+    values (#{categoryId,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
+      #{del,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.category.entity.Category">
+    insert into category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="categoryName != null">
+        category_name,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="del != null">
+        del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="categoryName != null">
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="del != null">
+        #{del,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.category.entity.Category">
+    update category
+    <set>
+      <if test="categoryName != null">
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="del != null">
+        del = #{del,jdbcType=INTEGER},
+      </if>
+    </set>
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.category.entity.Category">
+    update category
+    set category_name = #{categoryName,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      del = #{del,jdbcType=INTEGER}
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查询所有的类目 -->
+  <select id="selectAllCategory" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"></include>
+  	from category
+  </select>
+  
+  <!-- 查询Category类目下所有开通了直通车活动的商品，返回类目信息和商品列表 -->
+  <resultMap type="Category" id="categoryResulMap" extends="BaseResultMap">
+  	<collection property="goods" column="category_id" select="com.skycat.good.good.dao.GoodMapper.selectBe_topGoodByCategoryId"></collection>
+  	<collection property="beTops" column="category_id" select="com.skycat.category.dao.CategoryMapper.selectcateNameByParentId"></collection>
+  </resultMap>
+  
+  <!-- 开通了直通车活动的商品 -->
+  <select id="selectBe_topGoodByParrentId" parameterType="java.lang.Integer" resultMap="categoryResulMap">
+   	select <include refid="Base_Column_List"></include>
+	FROM category 
+	WHERE 
+	parent_id = #{parrentId}
+  </select>
+  
+   <select id="selectcateNameByParentId" parameterType="int" resultMap="BetopMap">
+    SELECT category_id,category_name
+	FROM category
+	WHERE
+	parent_id = #{id}
+  </select>
+  
+	<resultMap id="BetopMap" type="com.skycat.category.entity.BeTop">
+    <id column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+	
+	<!-- 1.mybatis首先配置配置文件  2.配置数据源 3.sqlSessionFactoryBean 4.MapperScannerConfigurer-->
+	<util:properties id="props" location="classpath:db.properties"></util:properties>
+	
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="driverClassName" value="#{props.driver}"></property>
+		<property name="url" value="#{props.url}"></property>
+		<property name="username" value="#{props.username}"></property>
+		<property name="password" value="#{props.pwd}"></property>
+		
+		<property name="minIdle" value="#{props.minIdle}"></property>
+		<property name="maxActive" value="#{props.maxActive}"></property>
+		<property name="initialSize" value="#{props.initialSize}"></property>
+		
+		<property name="maxWait" value="#{props.maxWait}"></property>
+		<property name="minEvictableIdleTimeMillis" value="#{props.minEvictableIdleTimeMillis}"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="#{props.timeBetweenEvictionRunsMillis}"></property>
+	</bean>
+	
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="typeAliasesPackage" value="com.skycat.good.property.entity,com.skycat.admin.entity,com.skycat.category.entity,com.skycat.good.comment.entity,com.skycat.good.good.entity,com.skycat.good.goodproperty.entity,com.skycat.property.entity,com.skycat.message.entity,com.skycat.order.item.entity,com.skycat.order.order.entity,com.skycat.privilege.entity,com.skycat.role.entity,com.skycat.rollimage.entity,com.skycat.store.entity,com.skycat.user.address.entity,com.skycat.user.cart.entity,com.skycat.user.good.entity,com.skycat.user.info.entity,com.skycat.user.store.entity"></property>
+		<!-- 如果mapper.xml和mapper接口在同一包下可以忽略不配置 -->
+		<!-- <property name="mapperLocations">
+			<array>
+				<value>classpath:com/wasea/type/dao/*.xml</value>
+				<value>classpath:com/wasea/flower/dao/*.xml</value>
+			</array>
+		</property> -->
+		<!-- 配置page分页插件的拦截器，会自动拦截查询数据库的请求，修改sql语句实现分页 -->
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageInterceptor">
+					<property name="properties">
+						<value>helperDialect=mysql</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.skycat.good.property.dao,com.skycat.admin.dao,com.skycat.category.dao,com.skycat.good.comment.dao,com.skycat.good.good.dao,com.skycat.good.goodproperty.dao,com.skycat.property.dao,com.skycat.message.dao,com.skycat.order.item.dao,com.skycat.order.order.dao,com.skycat.privilege.dao,com.skycat.role.dao,com.skycat.rollimage.dao,com.skycat.store.dao,com.skycat.user.address.dao,com.skycat.user.cart.dao,com.skycat.user.good.dao,com.skycat.user.info.dao,com.skycat.user.store.dao"></property>
+		<property name="annotationClass" value="com.skycat.annotation.MyBatisAnnotation"></property>
+	</bean> 
+	
+</beans>

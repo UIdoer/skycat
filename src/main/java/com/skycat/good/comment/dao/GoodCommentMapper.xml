@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.good.comment.dao.GoodCommentMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.good.comment.entity.GoodComment">
+    <id column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <result column="good_id" jdbcType="INTEGER" property="goodId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="com_grade" jdbcType="INTEGER" property="comGrade" />
+    <result column="com_text" jdbcType="VARCHAR" property="comText" />
+    <result column="com_time" jdbcType="TIMESTAMP" property="comTime" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="img3" jdbcType="VARCHAR" property="img3" />
+    <result column="img4" jdbcType="VARCHAR" property="img4" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    comment_id, good_id, user_id, com_grade, com_text, com_time, img1, img2, img3, img4
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from good_comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from good_comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.good.comment.entity.GoodComment">
+    insert into good_comment (comment_id, good_id, user_id, 
+      com_grade, com_text, com_time, 
+      img1, img2, img3, img4
+      )
+    values (#{commentId,jdbcType=INTEGER}, #{goodId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{comGrade,jdbcType=INTEGER}, #{comText,jdbcType=VARCHAR}, #{comTime,jdbcType=TIMESTAMP}, 
+      #{img1,jdbcType=VARCHAR}, #{img2,jdbcType=VARCHAR}, #{img3,jdbcType=VARCHAR}, #{img4,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.good.comment.entity.GoodComment">
+    insert into good_comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="goodId != null">
+        good_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="comGrade != null">
+        com_grade,
+      </if>
+      <if test="comText != null">
+        com_text,
+      </if>
+      <if test="comTime != null">
+        com_time,
+      </if>
+      <if test="img1 != null">
+        img1,
+      </if>
+      <if test="img2 != null">
+        img2,
+      </if>
+      <if test="img3 != null">
+        img3,
+      </if>
+      <if test="img4 != null">
+        img4,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=INTEGER},
+      </if>
+      <if test="goodId != null">
+        #{goodId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="comGrade != null">
+        #{comGrade,jdbcType=INTEGER},
+      </if>
+      <if test="comText != null">
+        #{comText,jdbcType=VARCHAR},
+      </if>
+      <if test="comTime != null">
+        #{comTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="img1 != null">
+        #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="img4 != null">
+        #{img4,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.good.comment.entity.GoodComment">
+    update good_comment
+    <set>
+      <if test="goodId != null">
+        good_id = #{goodId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="comGrade != null">
+        com_grade = #{comGrade,jdbcType=INTEGER},
+      </if>
+      <if test="comText != null">
+        com_text = #{comText,jdbcType=VARCHAR},
+      </if>
+      <if test="comTime != null">
+        com_time = #{comTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="img1 != null">
+        img1 = #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        img2 = #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        img3 = #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="img4 != null">
+        img4 = #{img4,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.good.comment.entity.GoodComment">
+    update good_comment
+    set good_id = #{goodId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      com_grade = #{comGrade,jdbcType=INTEGER},
+      com_text = #{comText,jdbcType=VARCHAR},
+      com_time = #{comTime,jdbcType=TIMESTAMP},
+      img1 = #{img1,jdbcType=VARCHAR},
+      img2 = #{img2,jdbcType=VARCHAR},
+      img3 = #{img3,jdbcType=VARCHAR},
+      img4 = #{img4,jdbcType=VARCHAR}
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+  
+  <resultMap type="GoodComment" id="goodCommentMap" extends="BaseResultMap">
+  	<!-- 根据用户的ID查询出用户信息，嵌套在用户评论中 -->
+  	<association property="user" column="user_id" select="com.skycat.user.info.dao.UserMapper.selectByPrimaryKey"></association>
+  </resultMap>
+  
+  <select id="selectGoodCommentbyGoodId" parameterType="int" resultMap="goodCommentMap">
+  	select
+  	<include refid="Base_Column_List" />
+    from good_comment
+    where good_id = #{goodId}
+  </select>
+  
+</mapper>

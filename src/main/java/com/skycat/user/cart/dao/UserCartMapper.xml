@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.user.cart.dao.UserCartMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.user.cart.entity.UserCart">
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="good_property_id" jdbcType="INTEGER" property="goodPropertyId" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="total" jdbcType="DOUBLE" property="total" />
+  </resultMap>
+  <insert id="insert" parameterType="com.skycat.user.cart.entity.UserCart">
+    insert into user_cart (user_id, good_property_id, number, 
+      total)
+    values (#{userId,jdbcType=INTEGER}, #{goodPropertyId,jdbcType=INTEGER}, #{number,jdbcType=INTEGER}, 
+      #{total,jdbcType=DOUBLE})
+  </insert>
+  <sql id="UserCartResultSql">
+  p.good_property_id,
+  uc.user_id,gp.price,gp.stock,
+  uc.total,uc.number,
+  s.store_id,
+  s.store_name,
+  g.good_id,
+  p.property_name,
+  g.good_title,
+  g.default_price,
+  g.post_fee,
+  g.post_free,
+  g.be_hot,
+  g.status,
+  gp.p1_value,
+  gp.p2_value
+  </sql>
+  <resultMap id="UserCartResultMap" type="UserCartVO" >
+  	<association property="s" javaType="Store" resultMap="com.skycat.store.dao.StoreMapper.BaseResultMap"></association>
+  	<association property="g" javaType="Good" resultMap="com.skycat.good.good.dao.GoodMapper.BaseResultMap"></association>
+  	<association property="p" javaType="Property" resultMap="com.skycat.good.property.dao.PropertyMapper.BaseResultMap"></association>
+  	<association property="uc"  javaType="UserCart" resultMap="com.skycat.user.cart.dao.UserCartMapper.BaseResultMap"></association>
+  	<association property="gp" javaType="GoodProperty" resultMap="com.skycat.good.goodproperty.dao.GoodPropertyMapper.BaseResultMap"></association>
+  </resultMap>
+  <select id="selectByGoodPropertyIds" parameterType="map" resultMap="UserCartResultMap">
+  	select  
+	*
+	from 
+	good_property gp,
+		(
+			select 
+			* 
+			from 
+			user_cart 
+			where  user_id = #{userId}
+			and good_property_id in
+			<foreach collection="cartData" index="i" item="data" open="(" close=")" separator=",">
+				<foreach collection="data.goodPropertyIds" index="j" item="d" open=" " close=" " separator=",">
+					#{d}
+				</foreach>
+			</foreach>
+			
+		) uc,
+	good g,
+	property p,
+	store s,
+	property p2
+	where 
+	uc.good_property_id = gp.good_property_id 
+	and gp.good_id = g.good_id 
+	and p.property_id = gp.p1_id 
+	and p2.property_id = gp.p2_id 
+	and s.store_id = g.store_id
+  </select>
+<!-- 	<include refid="UserCartResultSql" /> -->
+  <update id="updateUserCartNum" parameterType="UserCart">
+	    update user_cart
+	    set number = #{number}
+	   	where user_id = #{userId,jdbcType=INTEGER} and good_property_id = #{goodPropertyId,jdbcType=INTEGER}
+  </update>
+  <select id="selectUserCartByGoodPropertyId" parameterType="UserCart" resultMap="BaseResultMap">
+	  select
+	  *
+	  from 
+	  user_cart
+	  where user_id = #{userId} and good_property_id = #{goodPropertyId}
+  </select>
+ 
+  <select id="selectUserCartByUserCart" parameterType="UserCart" resultMap="UserCartResultMap">
+  	select  
+	*
+	from 
+	good_property gp,
+		(
+			select 
+			* 
+			from 
+			user_cart 
+			<trim	prefix="where " prefixOverrides="and">
+				<if test="userId!=null">
+					and user_id = #{userId}
+				</if>
+				<if test="goodPropertyId!=null">
+					and good_property_id = #{goodPropertyId}
+				</if>
+				
+				<if test="total!=null">
+					and total = #{total}
+				</if>
+				<if test="number!=null">
+					and number = #{number}
+				</if>
+			</trim>
+	
+		) uc,
+	good g,
+	property p,
+	store s,
+	property p2
+	where 
+	uc.good_property_id = gp.good_property_id 
+	and gp.good_id = g.good_id 
+	and p.property_id = gp.p1_id 
+	and p2.property_id = gp.p2_id 
+	and s.store_id = g.store_id
+  </select>
+  <delete id="deleteByGoodsPropertyId" parameterType="map">
+    delete from user_cart
+    where good_property_id = #{goodPropertyId} and user_id = #{userId}
+  </delete>
+  <insert id="insertSelective" parameterType="com.skycat.user.cart.entity.UserCart">
+    insert into user_cart
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="goodPropertyId != null">
+        good_property_id,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="total != null">
+        total,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="goodPropertyId != null">
+        #{goodPropertyId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        #{total,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据用户Id和商品属性Id查询出购物车中的目标记录 -->
+  <select id="selectUserCartByGoodPropertyIdAndUserId" parameterType="UserCart" resultMap="BaseResultMap">
+	select *
+	from user_cart
+	where 
+	user_id = #{userId}
+	and
+	good_property_id = #{goodPropertyId}
+  </select>
+  
+  <!-- 对存在的购物车商品，进行重新计算数量和总价钱 -->
+  <update id="updateUserCartByAddGood" parameterType="UserCart" >
+   update user_cart
+   set
+   number = #{number},
+   total = #{total}
+   where
+   user_id = #{userId}
+   and
+   good_property_id = #{goodPropertyId}
+  </update>
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.good.goodproperty.dao.GoodPropertyMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.good.goodproperty.entity.GoodProperty">
+    <id column="good_property_id" jdbcType="INTEGER" property="goodPropertyId" />
+    <result column="good_id" jdbcType="INTEGER" property="goodId" />
+    <result column="p1_id" jdbcType="INTEGER" property="p1Id" />
+    <result column="p1_value" jdbcType="VARCHAR" property="p1Value" />
+    <result column="p2_id" jdbcType="INTEGER" property="p2Id" />
+    <result column="p2_value" jdbcType="VARCHAR" property="p2Value" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+  </resultMap>
+  
+  <!-- GoodPropertyVo的Mapper -->
+  <resultMap type="com.skycat.good.goodproperty.entity.GoodPropertyVo" id="GoodPropertyVoResultMap" extends="BaseResultMap">
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    good_property_id, good_id, p1_id, p1_value, p2_id, p2_value, stock, price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from good_property
+    where good_property_id = #{goodPropertyId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectGoodPropertysByGoodId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from good_property
+    where good_id = #{goodId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from good_property
+    where good_property_id = #{goodPropertyId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.good.goodproperty.entity.GoodProperty">
+    insert into good_property (good_property_id, good_id, p1_id, 
+      p1_value, p2_id, p2_value, 
+      stock, price)
+    values (#{goodPropertyId,jdbcType=INTEGER}, #{goodId,jdbcType=INTEGER}, #{p1Id,jdbcType=INTEGER}, 
+      #{p1Value,jdbcType=VARCHAR}, #{p2Id,jdbcType=INTEGER}, #{p2Value,jdbcType=VARCHAR}, 
+      #{stock,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.good.goodproperty.entity.GoodProperty">
+    insert into good_property
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="goodPropertyId != null">
+        good_property_id,
+      </if>
+      <if test="goodId != null">
+        good_id,
+      </if>
+      <if test="p1Id != null">
+        p1_id,
+      </if>
+      <if test="p1Value != null">
+        p1_value,
+      </if>
+      <if test="p2Id != null">
+        p2_id,
+      </if>
+      <if test="p2Value != null">
+        p2_value,
+      </if>
+      <if test="stock != null">
+        stock,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="goodPropertyId != null">
+        #{goodPropertyId,jdbcType=INTEGER},
+      </if>
+      <if test="goodId != null">
+        #{goodId,jdbcType=INTEGER},
+      </if>
+      <if test="p1Id != null">
+        #{p1Id,jdbcType=INTEGER},
+      </if>
+      <if test="p1Value != null">
+        #{p1Value,jdbcType=VARCHAR},
+      </if>
+      <if test="p2Id != null">
+        #{p2Id,jdbcType=INTEGER},
+      </if>
+      <if test="p2Value != null">
+        #{p2Value,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null">
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.good.goodproperty.entity.GoodProperty">
+    update good_property
+    <set>
+      <if test="goodId != null">
+        good_id = #{goodId,jdbcType=INTEGER},
+      </if>
+      <if test="p1Id != null">
+        p1_id = #{p1Id,jdbcType=INTEGER},
+      </if>
+      <if test="p1Value != null">
+        p1_value = #{p1Value,jdbcType=VARCHAR},
+      </if>
+      <if test="p2Id != null">
+        p2_id = #{p2Id,jdbcType=INTEGER},
+      </if>
+      <if test="p2Value != null">
+        p2_value = #{p2Value,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null">
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where good_property_id = #{goodPropertyId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.good.goodproperty.entity.GoodProperty">
+    update good_property
+    set good_id = #{goodId,jdbcType=INTEGER},
+      p1_id = #{p1Id,jdbcType=INTEGER},
+      p1_value = #{p1Value,jdbcType=VARCHAR},
+      p2_id = #{p2Id,jdbcType=INTEGER},
+      p2_value = #{p2Value,jdbcType=VARCHAR},
+      stock = #{stock,jdbcType=INTEGER},
+      price = #{price,jdbcType=DOUBLE}
+    where good_property_id = #{goodPropertyId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据商品ID查找商品属性 -->
+  <select id="selectGoodPropertyByGoodId" parameterType="int" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from good_property
+    where good_id = #{id}
+  </select>
+  
+   <select id="selectGoodPropertyColorByGoodId" parameterType="int" resultType="String">
+  	SELECT DISTINCT p1_value
+	FROM 
+	good_property
+	WHERE good_id=#{id};
+  </select>
+  
+  
+</mapper>

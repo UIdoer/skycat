@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.good.good.dao.GoodMapper">
+  <resultMap id="BaseResultMap" type="com.skycat.good.good.entity.Good">
+    <id column="good_id" jdbcType="INTEGER" property="goodId" />
+    <result column="good_title" jdbcType="VARCHAR" property="goodTitle" />
+    <result column="store_id" jdbcType="INTEGER" property="storeId" />
+    <result column="default_price" jdbcType="DOUBLE" property="defaultPrice" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="img3" jdbcType="VARCHAR" property="img3" />
+    <result column="img4" jdbcType="VARCHAR" property="img4" />
+    <result column="img5" jdbcType="VARCHAR" property="img5" />
+    <result column="grade" jdbcType="INTEGER" property="grade" />
+    <result column="volume" jdbcType="INTEGER" property="volume" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="be_hot" jdbcType="INTEGER" property="beHot" />
+    <result column="be_top" jdbcType="INTEGER" property="beTop" />
+    <result column="post_free" jdbcType="INTEGER" property="postFree" />
+    <result column="post_fee" jdbcType="INTEGER" property="postFee" />
+    <result column="put_time" jdbcType="TIMESTAMP" property="putTime" />
+    <result column="down_time" jdbcType="TIMESTAMP" property="downTime" />
+    <result column="big_img1" jdbcType="VARCHAR" property="bigImg1" />
+    <result column="big_img2" jdbcType="VARCHAR" property="bigImg2" />
+    <result column="big_img3" jdbcType="VARCHAR" property="bigImg3" />
+    <result column="big_img4" jdbcType="VARCHAR" property="bigImg4" />
+    <result column="big_img5" jdbcType="VARCHAR" property="bigImg5" />
+    <result column="big_img6" jdbcType="VARCHAR" property="bigImg6" />
+  </resultMap>
+  
+  <resultMap type="com.skycat.good.good.entity.Store_Good_List" id="Store_Good_ListMap">
+  	<result column="good_id" jdbcType="INTEGER" property="good_id" />
+  	<result column="img1" jdbcType="VARCHAR" property="img1" />
+  	<result column="good_title" jdbcType="VARCHAR" property="good_title" />
+  	<result column="default_price" jdbcType="DOUBLE" property="default_price" />
+  	<result column="stock" jdbcType="INTEGER" property="stock" />
+  	<result column="stock" jdbcType="INTEGER" property="stock" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    good_id, good_title, store_id, default_price, img1, img2, img3, img4, img5, grade, 
+    volume, category_id, status, be_hot, be_top, post_free, post_fee, put_time, down_time, 
+    big_img1, big_img2, big_img3, big_img4, big_img5, big_img6
+  </sql> 
+  <!-- 根据商品的ID,查找商品，返回到详情页，嵌套查询商品属性，商品评论 -->
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from good
+    where good_id = #{goodId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectStore_Good_listByStoreId" parameterType="map" resultMap="Store_Good_ListMap">
+  	SELECT g.good_id,g.img1,g.good_title,g.default_price, IFNULL(SUM(stock),0) stock,status
+	FROM good_property gp RIGHT JOIN good g
+	ON gp.good_id = g.good_id WHERE g.good_id  IN
+	(SELECT good_id FROM good WHERE store_id = #{StoreId,jdbcType=INTEGER}
+	 <if test="status != null and status!=5">
+        AND STATUS=#{status,jdbcType=INTEGER}
+      </if>)
+	GROUP BY g.good_id
+	ORDER BY STATUS
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from good
+    where good_id = #{goodId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.good.good.entity.Good">
+    insert into good (good_id, good_title, store_id, 
+      default_price, img1, img2, 
+      img3, img4, img5, grade, 
+      volume, category_id, status, 
+      be_hot, be_top, post_free, 
+      post_fee, put_time, down_time, 
+      big_img1, big_img2, big_img3, 
+      big_img4, big_img5, big_img6
+      )
+    values (#{goodId,jdbcType=INTEGER}, #{goodTitle,jdbcType=VARCHAR}, #{storeId,jdbcType=INTEGER}, 
+      #{defaultPrice,jdbcType=DOUBLE}, #{img1,jdbcType=VARCHAR}, #{img2,jdbcType=VARCHAR}, 
+      #{img3,jdbcType=VARCHAR}, #{img4,jdbcType=VARCHAR}, #{img5,jdbcType=VARCHAR}, #{grade,jdbcType=INTEGER}, 
+      #{volume,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{beHot,jdbcType=INTEGER}, #{beTop,jdbcType=INTEGER}, #{postFree,jdbcType=INTEGER}, 
+      #{postFee,jdbcType=INTEGER}, #{putTime,jdbcType=TIMESTAMP}, #{downTime,jdbcType=TIMESTAMP}, 
+      #{bigImg1,jdbcType=VARCHAR}, #{bigImg2,jdbcType=VARCHAR}, #{bigImg3,jdbcType=VARCHAR}, 
+      #{bigImg4,jdbcType=VARCHAR}, #{bigImg5,jdbcType=VARCHAR}, #{bigImg6,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.good.good.entity.Good">
+    insert into good
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="goodId != null">
+        good_id,
+      </if>
+      <if test="goodTitle != null">
+        good_title,
+      </if>
+      <if test="storeId != null">
+        store_id,
+      </if>
+      <if test="defaultPrice != null">
+        default_price,
+      </if>
+      <if test="img1 != null">
+        img1,
+      </if>
+      <if test="img2 != null">
+        img2,
+      </if>
+      <if test="img3 != null">
+        img3,
+      </if>
+      <if test="img4 != null">
+        img4,
+      </if>
+      <if test="img5 != null">
+        img5,
+      </if>
+      <if test="grade != null">
+        grade,
+      </if>
+      <if test="volume != null">
+        volume,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="beHot != null">
+        be_hot,
+      </if>
+      <if test="beTop != null">
+        be_top,
+      </if>
+      <if test="postFree != null">
+        post_free,
+      </if>
+      <if test="postFee != null">
+        post_fee,
+      </if>
+      <if test="putTime != null">
+        put_time,
+      </if>
+      <if test="downTime != null">
+        down_time,
+      </if>
+      <if test="bigImg1 != null">
+        big_img1,
+      </if>
+      <if test="bigImg2 != null">
+        big_img2,
+      </if>
+      <if test="bigImg3 != null">
+        big_img3,
+      </if>
+      <if test="bigImg4 != null">
+        big_img4,
+      </if>
+      <if test="bigImg5 != null">
+        big_img5,
+      </if>
+      <if test="bigImg6 != null">
+        big_img6,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="goodId != null">
+        #{goodId,jdbcType=INTEGER},
+      </if>
+      <if test="goodTitle != null">
+        #{goodTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="storeId != null">
+        #{storeId,jdbcType=INTEGER},
+      </if>
+      <if test="defaultPrice != null">
+        #{defaultPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="img1 != null">
+        #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="img4 != null">
+        #{img4,jdbcType=VARCHAR},
+      </if>
+      <if test="img5 != null">
+        #{img5,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="volume != null">
+        #{volume,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="beHot != null">
+        #{beHot,jdbcType=INTEGER},
+      </if>
+      <if test="beTop != null">
+        #{beTop,jdbcType=INTEGER},
+      </if>
+      <if test="postFree != null">
+        #{postFree,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="putTime != null">
+        #{putTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downTime != null">
+        #{downTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bigImg1 != null">
+        #{bigImg1,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg2 != null">
+        #{bigImg2,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg3 != null">
+        #{bigImg3,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg4 != null">
+        #{bigImg4,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg5 != null">
+        #{bigImg5,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg6 != null">
+        #{bigImg6,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.good.good.entity.Good">
+    update good
+    <set>
+      <if test="goodTitle != null">
+        good_title = #{goodTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="storeId != null">
+        store_id = #{storeId,jdbcType=INTEGER},
+      </if>
+      <if test="defaultPrice != null">
+        default_price = #{defaultPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="img1 != null">
+        img1 = #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        img2 = #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        img3 = #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="img4 != null">
+        img4 = #{img4,jdbcType=VARCHAR},
+      </if>
+      <if test="img5 != null">
+        img5 = #{img5,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        grade = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="volume != null">
+        volume = #{volume,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="beHot != null">
+        be_hot = #{beHot,jdbcType=INTEGER},
+      </if>
+      <if test="beTop != null">
+        be_top = #{beTop,jdbcType=INTEGER},
+      </if>
+      <if test="postFree != null">
+        post_free = #{postFree,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        post_fee = #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="putTime != null">
+        put_time = #{putTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downTime != null">
+        down_time = #{downTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bigImg1 != null">
+        big_img1 = #{bigImg1,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg2 != null">
+        big_img2 = #{bigImg2,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg3 != null">
+        big_img3 = #{bigImg3,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg4 != null">
+        big_img4 = #{bigImg4,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg5 != null">
+        big_img5 = #{bigImg5,jdbcType=VARCHAR},
+      </if>
+      <if test="bigImg6 != null">
+        big_img6 = #{bigImg6,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where good_id = #{goodId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.good.good.entity.Good">
+    update good
+    set good_title = #{goodTitle,jdbcType=VARCHAR},
+      store_id = #{storeId,jdbcType=INTEGER},
+      default_price = #{defaultPrice,jdbcType=DOUBLE},
+      img1 = #{img1,jdbcType=VARCHAR},
+      img2 = #{img2,jdbcType=VARCHAR},
+      img3 = #{img3,jdbcType=VARCHAR},
+      img4 = #{img4,jdbcType=VARCHAR},
+      img5 = #{img5,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      volume = #{volume,jdbcType=INTEGER},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      be_hot = #{beHot,jdbcType=INTEGER},
+      be_top = #{beTop,jdbcType=INTEGER},
+      post_free = #{postFree,jdbcType=INTEGER},
+      post_fee = #{postFee,jdbcType=INTEGER},
+      put_time = #{putTime,jdbcType=TIMESTAMP},
+      down_time = #{downTime,jdbcType=TIMESTAMP},
+      big_img1 = #{bigImg1,jdbcType=VARCHAR},
+      big_img2 = #{bigImg2,jdbcType=VARCHAR},
+      big_img3 = #{bigImg3,jdbcType=VARCHAR},
+      big_img4 = #{bigImg4,jdbcType=VARCHAR},
+      big_img5 = #{bigImg5,jdbcType=VARCHAR},
+      big_img6 = #{bigImg6,jdbcType=VARCHAR}
+    where good_id = #{goodId,jdbcType=INTEGER}
+  </update>
+  <!-- 热卖活动的返回map -->
+   <resultMap type="com.skycat.good.good.entity.Good" id="goodsResulMap" extends="BaseResultMap">
+  	<collection property="goodPropertys" column="good_id"  select="com.skycat.good.goodproperty.dao.GoodPropertyMapper.selectGoodPropertyById"></collection>
+  </resultMap>
+  
+  
+  <!-- 根据热卖活动找出参加活动的商品 -->
+  <select id="selectByBe_hot" parameterType="int" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM good
+	WHERE be_hot=#{status}
+	AND 	
+	STATUS =0
+	
+  </select> 
+  
+  <!-- 根据类目id查找该类目下的所有商品 -->
+    <select id="selectGoodByCategory" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM good
+	WHERE category_id=#{CategoryId}
+	AND 	
+	STATUS =0
+	<if test="condition == 'price-key'">
+	 order by default_price
+	</if>
+	<if test="condition == 'newGood-key' ">
+	 order by put_time
+	</if>
+	
+	<if test="sort=='desc'">
+	desc
+	</if>
+	<if test="sort=='asc'">
+	asc
+	</if>
+  </select>
+  
+  <!-- 根据商品名称或者类目名或者店铺名进行模糊查询，返回商品列表给用户 -->
+  <select id="selectGoodByGoodTitle" parameterType="map" resultMap="BaseResultMap">
+	SELECT g.*
+	FROM good g,category c,store s
+	WHERE
+	g.`category_id` = c.`category_id`
+	AND
+	g.`store_id` = s.`store_id`
+	AND 	
+	g.STATUS =0
+	AND
+	(
+	c.`category_name` LIKE '%' #{goodTitle} '%'
+	OR
+	good_title like '%' #{goodTitle} '%'
+	OR 
+	s.`store_name` LIKE '%' #{goodTitle} '%'
+	)
+	<if test="condition == 'price-key'">
+	 order by g.`default_price` 
+	</if>
+	<if test="condition == 'newGood-key' ">
+	 order by g.`put_time`
+	</if>
+	
+	<if test="sort=='desc'">
+	desc
+	</if>
+	<if test="sort=='asc'">
+	asc
+	</if>
+  </select>
+   
+   <!-- 根据店铺Id,查找属于该店铺的所有商品 -->
+  <select id="selectGoodByStoreId" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from good
+    where store_id = #{storeId}
+    AND 	
+	STATUS = 0
+    <if test="condition == 'price-key'">
+	 order by default_price
+	</if>
+	<if test="condition == 'newGood-key' ">
+	 order by put_time
+	</if>
+	
+	<if test="sort=='desc'">
+	desc
+	</if>
+	<if test="sort=='asc'">
+	asc
+	</if>
+    
+    
+  </select>
+  
+  
+  
+  
+  
+  <!-- 查找出所有待审核的商品 -->
+  <select id="selectUncheckedGoods" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+    from good
+    where status=3
+  </select>
+  
+  <!-- 根据商品id查找店铺名 -->
+  <select id="selectStoreNameByGoodId" parameterType="int" resultType="string">
+  	select store_name
+  	from good g,store s
+  	where g.store_id=s.store_id and g.good_id=#{gid}
+  </select>
+  
+  <!-- 改变商品的审核状态，包括通过和驳回 -->
+  <update id="updateGoodStatus" parameterType="map">
+  	update good 
+  	set status=<if test="oper==1">0</if><if test="oper==2">4</if>
+  	where good_id=#{goodId}
+  </update>
+  
+   <!-- 根据店铺ID随机查找5个店铺商品，返回商品详情页 -->
+  <select id="selectStoreGoodByStoreId" parameterType="int" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from good
+    where store_id = #{storeId}
+    AND 	
+	STATUS =0
+    ORDER BY RAND() LIMIT 5;
+  </select>
+  
+  <!-- 根据顶级父类ID查找所有商品，返回商品列表 -->
+  <select id="selectGoodByParrentCategoryId" parameterType="map" resultMap="BaseResultMap">
+  	SELECT g.*
+	FROM good g,category c
+	WHERE
+	g.category_id = c.category_id
+	AND
+	c.parent_id=#{parentCategoryId}
+	AND 	
+	g.STATUS =0
+	<if test="condition == 'price-key'">
+	 order by g.default_price
+	</if>
+	<if test="condition == 'newGood-key' ">
+	 order by g.put_time
+	</if>
+	
+	<if test="sort=='desc'">
+	desc
+	</if>
+	<if test="sort=='asc'">
+	asc
+	</if>
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from good
+  </select>
+  
+ <!--  返回所有商品 -->
+  <select id="selectAllGood"  parameterType="map" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from good
+    where
+	STATUS =0
+    
+	<if test="condition == 'price-key'">
+	 order by default_price
+	</if>
+	<if test="condition == 'newGood-key' ">
+	 order by put_time
+	</if>
+	
+	<if test="sort=='desc'">
+	desc
+	</if>
+	<if test="sort=='asc'">
+	asc
+	</if>
+    
+  </select>
+  <!-- 开通了直通车活动的商品，商家推广专用 -->
+  <select id="selectGoodByBe_Top" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List" />
+  from 
+  good
+  where 
+  be_top = 0
+  AND 	
+  STATUS =0
+  ORDER BY RAND() LIMIT 5;
+  </select>
+  
+  <!-- 开通了直通车活动的商品,首页楼层专用 -->
+  <select id="selectBe_topGoodByCategoryId" parameterType="int" resultMap="BaseResultMap">
+  	SELECT g.*
+	FROM good g ,category c
+	WHERE 
+	g.category_id = c.category_id
+	AND
+	g.be_top=0
+	AND
+	g.status=0
+	AND
+	c.parent_id =#{categoryId}
+	AND 	
+	g.STATUS =0
+	ORDER BY RAND() LIMIT 6;
+  </select>
+  
+  
+  
+</mapper>

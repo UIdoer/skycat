@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skycat.order.item.dao.OrderItemMapper">
+
+  <resultMap id="BaseResultMap" type="com.skycat.order.item.entity.OrderItem">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="good_property_id" jdbcType="INTEGER" property="goodPropertyId" />
+    <result column="item_count" jdbcType="INTEGER" property="itemCount" />
+    <result column="order_item_total" jdbcType="DOUBLE" property="total" />
+  </resultMap>
+  
+  <resultMap id="OnceOrderItemMap" type="com.skycat.order.item.entity.OnceOrderItem">
+  	<result column="img1" jdbcType="VARCHAR" property="img1" />
+  	<result column="good_title" jdbcType="VARCHAR" property="good_title" />
+  	<result column="p1_value" jdbcType="VARCHAR" property="p1_value" />
+  	<result column="p2_value" jdbcType="VARCHAR" property="p2_value" />
+  	<result column="price" jdbcType="DOUBLE" property="price" />
+  	<result column="item_count" jdbcType="DOUBLE" property="item_count" />
+  </resultMap>
+  
+  <resultMap type="OrderItemVo" id="OrderItemVoResultMap" extends="BaseResultMap">
+  	<association resultMap="com.skycat.good.good.dao.GoodMapper.BaseResultMap" property="good"></association>
+  	<association resultMap="com.skycat.good.goodproperty.dao.GoodPropertyMapper.GoodPropertyVoResultMap" property="gp"></association>
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    item_id, order_id, good_property_id, item_count, order_item_total 
+  </sql>
+  
+  <sql id="OnceOrderItemSql">
+  	img1,good_title,p1_value,p2_value,price,item_count
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from order_item
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectOnceOrderItemByOrderId" parameterType="java.lang.Integer" resultMap="OnceOrderItemMap">
+   select 
+    <include refid="OnceOrderItemSql" />
+    FROM order_item oi,good g,good_property gp
+    WHERE g.good_id=gp.good_id AND oi.good_property_id=gp.good_property_id AND oi.order_id= #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from order_item
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.skycat.order.item.entity.OrderItem">
+    insert into order_item (item_id, order_id, good_property_id, 
+      item_count, order_item_total)
+    values (#{itemId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{goodPropertyId,jdbcType=INTEGER}, 
+      #{itemCount,jdbcType=INTEGER}, #{total,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.skycat.order.item.entity.OrderItem">
+    insert into order_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="goodPropertyId != null">
+        good_property_id,
+      </if>
+      <if test="itemCount != null">
+        item_count,
+      </if>
+      <if test="total != null">
+        order_item_total,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="goodPropertyId != null">
+        #{goodPropertyId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCount != null">
+        #{itemCount,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        #{total,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.skycat.order.item.entity.OrderItem">
+    update order_item
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="goodPropertyId != null">
+        good_property_id = #{goodPropertyId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCount != null">
+        item_count = #{itemCount,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        order_item_total = #{total,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.skycat.order.item.entity.OrderItem">
+    update order_item
+    set order_id = #{orderId,jdbcType=INTEGER},
+      good_property_id = #{goodPropertyId,jdbcType=INTEGER},
+      item_count = #{itemCount,jdbcType=INTEGER},
+      order_item_total = #{total,jdbcType=DOUBLE}
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+</mapper>
